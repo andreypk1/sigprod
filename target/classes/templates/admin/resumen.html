@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Resumen backlog · Admin · SIGPROD</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link rel="stylesheet" th:href="@{/css/sigprod.css}"/>
+</head>
+<body class="bg-app d-flex flex-column min-vh-100">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="d-flex flex-grow-1 app-shell min-vh-0">
+  <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+  <main class="flex-grow-1 p-4">
+    <nav aria-label="breadcrumb" class="small">
+      <ol class="breadcrumb mb-2">
+        <li class="breadcrumb-item"><a th:href="@{/admin/resumen}">Administración</a></li>
+        <li class="breadcrumb-item active">Resumen backlog</li>
+      </ol>
+    </nav>
+
+    <h1 class="h4 mb-1">Backlog e información global</h1>
+    <p class="text-muted small mb-4">Vista consolidada para el administrador: épicas, historias de usuario y reparto por proyecto.</p>
+
+    <div class="d-flex flex-wrap gap-2 mb-4">
+      <a class="btn btn-primary btn-sm" th:href="@{/backlog}"><i class="bi bi-pencil-square me-1"></i>Gestionar épicas e historias</a>
+      <a class="btn btn-outline-primary btn-sm" th:href="@{/proyectos}"><i class="bi bi-folder2-open me-1"></i>Proyectos</a>
+      <a class="btn btn-outline-secondary btn-sm" th:href="@{/admin/usuarios}"><i class="bi bi-people me-1"></i>Usuarios</a>
+      <a class="btn btn-outline-secondary btn-sm" th:href="@{/auditoria}"><i class="bi bi-journal-check me-1"></i>Auditoría</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card card-kpi p-3 h-100">
+          <div class="small text-muted">Proyectos activos</div>
+          <div class="fs-4 fw-semibold" th:text="${conteos.proyectosActivos}">0</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card card-kpi p-3 h-100">
+          <div class="small text-muted">Proyectos (total)</div>
+          <div class="fs-4 fw-semibold" th:text="${conteos.proyectosTotal}">0</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card card-kpi p-3 h-100">
+          <div class="small text-muted">Historias (total)</div>
+          <div class="fs-4 fw-semibold" th:text="${conteos.historiasTotal}">0</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card card-kpi p-3 h-100">
+          <div class="small text-muted">Épicas (total)</div>
+          <div class="fs-4 fw-semibold" th:text="${conteos.epicasTotal}">0</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-xl-2">
+        <div class="card card-kpi p-3 h-100">
+          <div class="small text-muted">HU en estado BACKLOG</div>
+          <div class="fs-4 fw-semibold" th:text="${conteos.historiasEstadoBacklog}">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-white fw-semibold">Historias de usuario por estado</div>
+      <div class="card-body">
+        <div class="d-flex flex-wrap gap-2" th:if="${historiasPorEstado != null and !historiasPorEstado.isEmpty()}">
+          <span th:each="e : ${historiasPorEstado.entrySet()}" class="badge rounded-pill bg-light text-dark border px-3 py-2">
+            <span class="fw-semibold" th:text="${e.key}">ESTADO</span>
+            <span class="text-muted ms-1" th:text="${e.value}">0</span>
+          </span>
+        </div>
+        <p class="text-muted small mb-0" th:if="${historiasPorEstado == null or historiasPorEstado.isEmpty()}">Sin datos de historias.</p>
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-header bg-white fw-semibold">Backlog por proyecto</div>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead><tr><th>Proyecto</th><th>Cliente</th><th>Estado</th><th class="text-end">Épicas</th><th class="text-end">Historias</th><th></th></tr></thead>
+          <tbody>
+          <tr th:each="f : ${filasProyecto}">
+            <td th:text="${f.nombre}">—</td>
+            <td th:text="${f.clienteNombre != null ? f.clienteNombre : '—'}">—</td>
+            <td><span class="badge bg-primary" th:text="${f.estadoProyecto}">ACTIVO</span></td>
+            <td class="text-end" th:text="${f.epicas}">0</td>
+            <td class="text-end" th:text="${f.historias}">0</td>
+            <td class="text-end text-nowrap">
+              <a class="btn btn-sm btn-outline-primary" th:href="@{/proyectos/{id}(id=${f.proyectoId})}">Detalle</a>
+              <a class="btn btn-sm btn-primary" th:href="@{/proyectos/{id}/historias(id=${f.proyectoId})}">Backlog</a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

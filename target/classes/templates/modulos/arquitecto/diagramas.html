@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="|Diagramas arq. · ${proyecto.nombre}|">Diagramas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link rel="stylesheet" th:href="@{/css/sigprod.css}"/>
+</head>
+<body class="bg-app d-flex flex-column min-vh-100">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="d-flex flex-grow-1 app-shell min-vh-0">
+  <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+  <main class="flex-grow-1 p-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/arquitectura}">Arquitectura</a></li>
+        <li class="breadcrumb-item active" th:text="${proyecto.nombre}"></li>
+      </ol>
+    </nav>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h5 mb-0"><i class="bi bi-bezier2 me-2 text-primary"></i>Diagramas técnicos</h1>
+      <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalDg"><i class="bi bi-plus-circle-fill me-1"></i>Nuevo</button>
+    </div>
+    <div class="alert alert-success py-2 small" th:if="${ok != null}"><i class="bi bi-check-circle me-1"></i><span th:text="${ok}"></span></div>
+    <div class="list-group shadow-sm">
+      <div class="list-group-item" th:each="d : ${diagramas}">
+        <div class="d-flex justify-content-between"><strong th:text="${d.nombre}">N</strong><span class="badge bg-secondary" th:text="${d.tipo}">UML</span></div>
+        <pre class="small mt-2 mb-0 bg-light p-2 rounded" th:text="${d.contenido}"></pre>
+      </div>
+      <div class="list-group-item text-muted small" th:if="${diagramas.isEmpty()}">Sin diagramas.</div>
+    </div>
+    <div class="modal fade" id="modalDg" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <form th:action="@{/arquitectura/{id}/diagramas(id=${proyecto.id})}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <div class="modal-header"><h5 class="modal-title">Nuevo diagrama</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body row g-2">
+              <div class="col-md-4"><label class="form-label">Tipo</label>
+                <select class="form-select" name="tipo"><option>UML</option><option>C4</option><option>BPMN</option><option>ER</option></select></div>
+              <div class="col-md-8"><label class="form-label">Nombre</label><input class="form-control" name="nombre" required/></div>
+              <div class="col-12"><label class="form-label">Contenido</label><textarea class="form-control font-monospace small" name="contenido" rows="8"></textarea></div>
+              <div class="col-md-4"><label class="form-label">Versión</label><input class="form-control" name="version" value="1.0"/></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

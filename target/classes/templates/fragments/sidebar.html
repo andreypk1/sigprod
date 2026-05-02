@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+  <!-- Cada enlace replica las reglas de com.sigpro.config.SecurityConfig para esa ruta. -->
+  <aside th:fragment="sidebar" class="sidebar-app p-3">
+    <div class="small text-uppercase text-white-50 mb-2" sec:authorize="isAuthenticated()">General</div>
+    <a class="d-flex align-items-center" th:href="@{/dashboard}" sec:authorize="isAuthenticated()"
+       th:classappend="${navRequestUri != null and #strings.contains(navRequestUri, '/dashboard')} ? ' active' : ''">
+      <i class="bi bi-speedometer2 nav-icon"></i><span class="nav-label">Dashboard</span>
+    </a>
+    <a class="d-flex align-items-center" th:href="@{/tareas}" sec:authorize="isAuthenticated()">
+      <i class="bi bi-check2-square nav-icon"></i><span class="nav-label">Mis tareas</span>
+    </a>
+    <a class="d-flex align-items-center" th:href="@{/notificaciones}"
+       sec:authorize="isAuthenticated()">
+      <i class="bi bi-bell nav-icon"></i><span class="nav-label">Notificaciones</span>
+    </a>
+
+    <div class="mt-3 small text-uppercase text-white-50"
+         sec:authorize="hasAnyRole('ADMINISTRADOR','PROJECT_MANAGER','PRODUCT_OWNER','ANALISTA_NEGOCIO')">Proyecto</div>
+    <a class="d-flex align-items-center" th:href="@{/proyectos}"
+       sec:authorize="hasAnyRole('ADMINISTRADOR','PROJECT_MANAGER','PRODUCT_OWNER')">
+      <i class="bi bi-folder2-open nav-icon"></i><span class="nav-label">Proyectos</span>
+    </a>
+    <a class="d-flex align-items-center" th:href="@{/analista}"
+       sec:authorize="hasAnyRole('ADMINISTRADOR','ANALISTA_NEGOCIO','PROJECT_MANAGER')">
+      <i class="bi bi-file-earmark-text nav-icon"></i><span class="nav-label">Análisis (SRS)</span>
+    </a>
+    <a class="d-flex align-items-center" th:href="@{/backlog}"
+       sec:authorize="hasAnyRole('ADMINISTRADOR','PRODUCT_OWNER','PROJECT_MANAGER','ANALISTA_NEGOCIO')"
+       title="Épicas e historias de usuario (CRUD)">
+      <i class="bi bi-list-ul nav-icon"></i><span class="nav-label">Épicas e historias</span>
+    </a>
+    <a class="d-flex align-items-center" th:href="@{/backlog/aceptacion}"
+       sec:authorize="hasAnyRole('ADMINISTRADOR','PRODUCT_OWNER')">
+      <i class="bi bi-patch-check nav-icon"></i><span class="nav-label">Tablero Aceptación</span>
+    </a>
+
+    <div class="mt-3 small text-uppercase text-white-50"
+         sec:authorize="hasAnyRole('ADMINISTRADOR','PROJECT_MANAGER','PRODUCT_OWNER','DESARROLLADOR_FRONTEND','DESARROLLADOR_BACKEND')">Iteración</div>
+    <a class="d-flex align-items-center" th:href="@{/sprints}"
+       sec:authorize="hasAnyRole('ADMINISTRADOR','PROJECT_MANAGER','PRODUCT_OWNER','DESARROLLADOR_FRONTEND','DESARROLLADOR_BACKEND')">
+      <i class="bi bi-lightning-charge nav-icon"></i><span class="nav-label">Sprints</span>
+    </a>
+
+    <div class="mt-3 small text-uppercase text-white-50"
+         sec:authorize="hasAnyRole('ADMINISTRADOR','ARQUITECTO_SOFTWARE')">Arquitectura</div>
+    <a class="d-flex align-items-center" th:href="@{/arquitectura}"
+       sec:authorize="hasAnyRole('ADMINISTRADOR','ARQUITECTO_SOFTWARE')">
+      <i class="bi bi-layers nav-icon"></i><span class="nav-label">Vista de arquitectura</span>
+    </a>
+
+    <div class="mt-3 small text-uppercase text-white-50"
+         sec:authorize="hasAnyRole('ADMINISTRADOR','DISENADOR_UI_UX','DESARROLLADOR_FRONTEND')">Diseño</div>
+    <a class="d-flex align-items-center" th:href="@{/diseno}"
+       sec:authorize="hasAnyRole('ADMINISTRADOR','DISENADOR_UI_UX','DESARROLLADOR_FRONTEND')">
+      <i class="bi bi-layout-wtf nav-icon"></i><span class="nav-label">Diseño UI/UX</span>
+    </a>
+
+    <div class="mt-3 small text-uppercase text-white-50"
+         sec:authorize="hasAnyRole('ADMINISTRADOR','QA_ENGINEER','PROJECT_MANAGER')">Calidad</div>
+    <a class="d-flex align-items-center" th:href="@{/qa}"
+       sec:authorize="hasAnyRole('ADMINISTRADOR','QA_ENGINEER','PROJECT_MANAGER')">
+      <i class="bi bi-clipboard-data nav-icon"></i><span class="nav-label">QA</span>
+    </a>
+
+    <div class="mt-3 small text-uppercase text-white-50"
+         sec:authorize="hasAnyRole('ADMINISTRADOR','DEVOPS_ENGINEER')">Operaciones</div>
+    <a class="d-flex align-items-center" th:href="@{/devops}"
+       sec:authorize="hasAnyRole('ADMINISTRADOR','DEVOPS_ENGINEER')">
+      <i class="bi bi-cloud-upload nav-icon"></i><span class="nav-label">DevOps</span>
+    </a>
+
+    <div class="mt-3 small text-uppercase text-white-50" sec:authorize="hasRole('ADMINISTRADOR')">Administración</div>
+    <a class="d-flex align-items-center" th:href="@{/admin/resumen}" sec:authorize="hasRole('ADMINISTRADOR')"
+       th:classappend="${navRequestUri != null and #strings.contains(navRequestUri, '/admin/resumen')} ? ' active' : ''">
+      <i class="bi bi-shield-fill-gear nav-icon"></i><span class="nav-label">Resumen backlog</span>
+    </a>
+    <a class="d-flex align-items-center" th:href="@{/admin/usuarios}" sec:authorize="hasRole('ADMINISTRADOR')">
+      <i class="bi bi-people-fill nav-icon"></i><span class="nav-label">Usuarios</span>
+    </a>
+    <a class="d-flex align-items-center" th:href="@{/admin/clientes}" sec:authorize="hasRole('ADMINISTRADOR')">
+      <i class="bi bi-building nav-icon"></i><span class="nav-label">Clientes</span>
+    </a>
+    <a class="d-flex align-items-center" th:href="@{/auditoria}" sec:authorize="hasRole('ADMINISTRADOR')">
+      <i class="bi bi-journal-check nav-icon"></i><span class="nav-label">Auditoría</span>
+    </a>
+  </aside>
+</body>
+</html>

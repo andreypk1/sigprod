@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Auditoría · SIGPROD</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" th:href="@{/css/sigprod.css}"/>
+</head>
+<body class="bg-app d-flex flex-column min-vh-100">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="d-flex flex-grow-1 app-shell min-vh-0">
+  <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+  <main class="flex-grow-1 p-4">
+    <h1 class="h4 mb-3">Bitácora de auditoría</h1>
+    <form class="row g-2 mb-3" method="get">
+      <div class="col-md-3"><input class="form-control" name="usuarioId" placeholder="Usuario ID" th:value="${filtroUsuario}"/></div>
+      <div class="col-md-2"><input class="form-control" name="accion" placeholder="Acción" th:value="${filtroAccion}"/></div>
+      <div class="col-md-2"><input class="form-control" name="entidad" placeholder="Entidad" th:value="${filtroEntidad}"/></div>
+      <div class="col-md-2"><input type="date" class="form-control" name="desde" th:value="${filtroDesde}"/></div>
+      <div class="col-md-2"><input type="date" class="form-control" name="hasta" th:value="${filtroHasta}"/></div>
+      <div class="col-md-1"><button class="btn btn-outline-secondary w-100" type="submit">Filtrar</button></div>
+    </form>
+    <div class="table-responsive card shadow-sm">
+      <table class="table table-sm mb-0">
+        <thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Entidad</th><th>Id</th></tr></thead>
+        <tbody>
+        <tr th:each="b : ${registros}">
+          <td th:text="${b.fecha}">-</td>
+          <td th:text="${b.usuarioNombre}">-</td>
+          <td th:text="${b.accion}">-</td>
+          <td th:text="${b.entidad}">-</td>
+          <td th:text="${b.entidadId}">-</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</body>
+</html>
