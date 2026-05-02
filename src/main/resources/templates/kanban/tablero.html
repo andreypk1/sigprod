@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="|Kanban · ${proyecto.nombre}|">Kanban</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link rel="stylesheet" th:href="@{/css/sigprod.css}"/>
+</head>
+<body class="bg-app d-flex flex-column min-vh-100">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="d-flex flex-grow-1 app-shell min-vh-0">
+  <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+  <main class="flex-grow-1 p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <div>
+        <h1 class="h5 mb-0" th:text="${proyecto.nombre}">Proyecto</h1>
+        <small class="text-muted">Tablero Kanban</small>
+      </div>
+      <div class="d-flex gap-2 align-items-center flex-wrap">
+        <a class="btn btn-outline-success btn-sm"
+           th:href="@{/exportar/tareas/{id}/csv(id=${proyecto.id})}">
+          <i class="bi bi-file-earmark-excel-fill me-1"></i>Exportar CSV
+        </a>
+        <select class="form-select form-select-sm" id="filtroAsignado" style="width:200px">
+          <option value="">Todos los asignados</option>
+          <option th:each="u : ${miembrosProyecto}" th:value="${u.id}" th:text="${u.nombreCompleto()}"></option>
+        </select>
+        <select class="form-select form-select-sm" id="filtroTipo" style="width:160px">
+          <option value="">Tipo</option>
+          <option>FRONTEND</option><option>BACKEND</option><option>QA</option><option>DEVOPS</option>
+        </select>
+        <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalTarea"><i class="bi bi-plus-circle-fill me-1"></i>Nueva Tarea</button>
+      </div>
+    </div>
+
+    <div class="row g-2 flex-nowrap overflow-auto pb-2">
+      <div class="col min-width-col" th:each="col : ${columnas}">
+        <div class="fw-semibold small mb-2 d-flex justify-content-between">
+          <span th:text="${col}">COL</span>
+          <span class="badge bg-secondary" th:id="|cnt-${col}|">0</span>
+        </div>
+        <div class="kanban-column p-2" th:attr="data-estado=${col}" th:id="|col-${col}|">
+          <th:block th:each="t : ${tareas}">
+            <div th:if="${t.estado == col}" class="card task-card kanban-card mb-2 p-2 ps-2"
+                 th:classappend="|prioridad-${t.prioridad != null ? t.prioridad : 'MEDIA'}|"
+                 th:attr="data-id=${t.id},data-asignado=${t.asignadoId},data-tipo=${t.tipo}">
+              <div class="d-flex justify-content-between align-items-start gap-1">
+                <div class="fw-semibold flex-grow-1" th:text="${t.titulo}">Tarea</div>
+                <span class="flex-shrink-0">
+                  <i th:if="${t.prioridad == 'CRITICA'}" class="bi bi-arrow-up-circle-fill text-danger" title="Crítica"></i>
+                  <i th:if="${t.prioridad == 'ALTA'}" class="bi bi-arrow-up-circle text-warning" title="Alta"></i>
+                  <i th:if="${t.prioridad == 'MEDIA' or t.prioridad == null}" class="bi bi-dash-circle text-info" title="Media"></i>
+                  <i th:if="${t.prioridad == 'BAJA'}" class="bi bi-arrow-down-circle text-secondary" title="Baja"></i>
+                </span>
+              </div>
+              <div class="small text-muted" th:text="${t.asignadoNombre}">Asignado</div>
+              <div class="mt-1">
+                <span class="badge bg-warning text-dark" th:text="${t.prioridad}">ALTA</span>
+                <span class="badge bg-light text-dark" th:text="${t.tipo}">FE</span>
+              </div>
+              <div class="small mt-1 text-wrap" th:text="${'Est: ' + (t.horasEstimadas != null ? t.horasEstimadas : 0) + ' / Real: ' + (t.horasReales != null ? t.horasReales : 0) + ' h'}"></div>
+            </div>
+          </th:block>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="toastOk" class="toast align-items-center text-bg-success" role="alert">
+        <div class="d-flex"><div class="toast-body">Estado actualizado</div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade" id="modalTarea" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Nueva tarea</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <form id="formTarea">
+          <input type="hidden" id="tfProyectoId" th:value="${proyecto.id}"/>
+          <div class="mb-2"><label class="form-label">Título</label><input class="form-control" id="tfTitulo" required/></div>
+          <div class="mb-2"><label class="form-label">Descripción</label><textarea class="form-control" id="tfDesc" rows="2"></textarea></div>
+          <div class="row g-2">
+            <div class="col-md-6">
+              <label class="form-label">Historia</label>
+              <select class="form-select" id="tfHistoria">
+                <option th:each="h : ${historias}" th:value="${h.id}" th:text="${h.titulo}"></option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Asignado</label>
+              <select class="form-select" id="tfAsignado">
+                <option th:each="u : ${miembrosProyecto}" th:value="${u.id}" th:text="${u.nombreCompleto()}"></option>
+              </select>
+            </div>
+            <div class="col-md-4"><label class="form-label">Tipo</label>
+              <select class="form-select" id="tfTipo"><option>FRONTEND</option><option>BACKEND</option><option>QA</option><option>DEVOPS</option><option>ANALISIS</option><option>DISEÑO</option></select>
+            </div>
+            <div class="col-md-4"><label class="form-label">Prioridad</label>
+              <select class="form-select" id="tfPrioridad"><option>CRITICA</option><option>ALTA</option><option>MEDIA</option><option>BAJA</option></select>
+            </div>
+            <div class="col-md-4"><label class="form-label">Horas est.</label><input type="number" step="0.5" class="form-control" id="tfHoras"/></div>
+            <div class="col-md-6"><label class="form-label">Fecha límite</label><input type="date" class="form-control" id="tfFecha"/></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cerrar</button>
+        <button class="btn btn-primary" id="btnGuardarTarea" type="button">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script th:inline="javascript">
+  const proyectoId = /*[[${proyecto.id}]]*/ '';
+  document.querySelectorAll('[id^="col-"]').forEach(col => {
+    Sortable.create(col, {
+      group: 'kanban',
+      animation: 150,
+      onAdd: async (evt) => {
+        const card = evt.item;
+        const id = card.getAttribute('data-id');
+        const destino = evt.to;
+        const nuevoEstado = destino.getAttribute('data-estado');
+        const res = await fetch('/api/tareas/' + id + '/estado', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ estado: nuevoEstado })
+        });
+        const toastEl = document.getElementById('toastOk');
+        if (res.ok) {
+          const t = bootstrap.Toast.getOrCreateInstance(toastEl);
+          t.show();
+          refrescarConteos();
+        } else {
+          const err = await res.json().catch(()=>({mensaje:'Error'}));
+          alert(err.mensaje || 'No se pudo mover');
+          location.reload();
+        }
+      }
+    });
+  });
+
+  function refrescarConteos() {
+    document.querySelectorAll('[id^="col-"]').forEach(col => {
+      const estado = col.getAttribute('data-estado');
+      const cnt = col.querySelectorAll('.kanban-card').length;
+      const badge = document.getElementById('cnt-' + estado);
+      if (badge) badge.textContent = cnt;
+    });
+  }
+  refrescarConteos();
+
+  document.getElementById('btnGuardarTarea')?.addEventListener('click', async () => {
+    const body = {
+      titulo: document.getElementById('tfTitulo').value,
+      descripcion: document.getElementById('tfDesc').value,
+      historiaId: document.getElementById('tfHistoria').value,
+      proyectoId,
+      tipo: document.getElementById('tfTipo').value,
+      asignadoId: document.getElementById('tfAsignado').value,
+      horasEstimadas: parseFloat(document.getElementById('tfHoras').value || '0'),
+      prioridad: document.getElementById('tfPrioridad').value,
+      estado: 'TODO'
+    };
+    const fecha = document.getElementById('tfFecha').value;
+    if (fecha) body.fechaLimite = fecha;
+    const res = await fetch('/api/tareas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (res.ok) location.reload(); else alert('No se pudo crear la tarea');
+  });
+
+  function aplicarFiltros() {
+    const fa = document.getElementById('filtroAsignado').value;
+    const ft = document.getElementById('filtroTipo').value;
+    document.querySelectorAll('.kanban-card').forEach(c => {
+      const okA = !fa || c.getAttribute('data-asignado') === fa;
+      const okT = !ft || c.getAttribute('data-tipo') === ft;
+      c.style.display = (okA && okT) ? 'block' : 'none';
+    });
+  }
+  document.getElementById('filtroAsignado')?.addEventListener('change', aplicarFiltros);
+  document.getElementById('filtroTipo')?.addEventListener('change', aplicarFiltros);
+</script>
+<style>
+.min-width-col{min-width:260px;}
+</style>
+</body>
+</html>

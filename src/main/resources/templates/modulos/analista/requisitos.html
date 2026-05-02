@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="|Requisitos · ${proyecto.nombre}|">Requisitos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link rel="stylesheet" th:href="@{/css/sigprod.css}"/>
+</head>
+<body class="bg-app d-flex flex-column min-vh-100">
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="d-flex flex-grow-1 app-shell min-vh-0">
+  <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+  <main class="flex-grow-1 p-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a th:href="@{/analista}">Analista</a></li>
+        <li class="breadcrumb-item active" th:text="${proyecto.nombre}"></li>
+      </ol>
+    </nav>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="h5 mb-0"><i class="bi bi-file-earmark-text me-2 text-primary"></i>Requisitos SRS</h1>
+      <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalReq">
+        <i class="bi bi-plus-circle-fill me-1"></i>Nuevo Requisito
+      </button>
+    </div>
+
+    <div class="alert alert-success py-2 small" th:if="${ok != null}">
+      <i class="bi bi-check-circle me-1"></i><span th:text="${ok}"></span>
+    </div>
+
+    <div class="table-responsive card shadow-sm">
+      <table class="table table-sm table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr><th>Código</th><th>Nombre</th><th>Tipo</th><th>Prioridad</th><th>Estado</th><th>Versión</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="r : ${requisitos}">
+            <td><code th:text="${r.codigo}">RF-01</code></td>
+            <td th:text="${r.nombre}">Nombre</td>
+            <td>
+              <span class="badge bg-primary" th:if="${r.tipo == 'FUNCIONAL'}">Funcional</span>
+              <span class="badge bg-secondary" th:unless="${r.tipo == 'FUNCIONAL'}">No funcional</span>
+            </td>
+            <td>
+              <span class="badge bg-danger" th:if="${r.prioridad == 'ALTA'}">Alta</span>
+              <span class="badge bg-warning text-dark" th:if="${r.prioridad == 'MEDIA'}">Media</span>
+              <span class="badge bg-light text-dark" th:if="${r.prioridad == 'BAJA'}">Baja</span>
+            </td>
+            <td><span class="badge bg-success" th:text="${r.estado}">APROBADO</span></td>
+            <td th:text="${r.version}">1.0</td>
+            <td>
+              <a class="btn btn-outline-danger btn-sm"
+                 th:href="@{/analista/{pid}/requisitos/{id}/eliminar(pid=${proyecto.id},id=${r.id})}">
+                <i class="bi bi-trash3-fill"></i>
+              </a>
+            </td>
+          </tr>
+          <tr th:if="${requisitos.isEmpty()}">
+            <td colspan="7" class="text-center text-muted small py-3">No hay requisitos aún.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal fade" id="modalReq" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Nuevo Requisito</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <form th:action="@{/analista/{id}/requisitos(id=${proyecto.id})}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <div class="modal-body">
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <label class="form-label">Código</label>
+                  <input class="form-control" name="codigo" placeholder="RF-PO-01" required/>
+                </div>
+                <div class="col-md-5">
+                  <label class="form-label">Nombre</label>
+                  <input class="form-control" name="nombre" required/>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label">Tipo</label>
+                  <select class="form-select" name="tipo">
+                    <option>FUNCIONAL</option>
+                    <option>NO_FUNCIONAL</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label">Prioridad</label>
+                  <select class="form-select" name="prioridad">
+                    <option>ALTA</option><option>MEDIA</option><option>BAJA</option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Descripción</label>
+                  <textarea class="form-control" name="descripcion" rows="3"></textarea>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Estado</label>
+                  <select class="form-select" name="estado">
+                    <option>BORRADOR</option><option>APROBADO</option>
+                    <option>RECHAZADO</option><option>OBSOLETO</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Versión</label>
+                  <input class="form-control" name="version" value="1.0"/>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <i class="bi bi-x-circle me-1"></i>Cancelar
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-floppy-fill me-1"></i>Guardar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

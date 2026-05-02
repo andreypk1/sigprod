@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>SIGPROD · Inicio</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link rel="stylesheet" th:href="@{/css/sigprod.css}"/>
+</head>
+<body>
+<section class="hero-gradient py-5 mb-5 animate-fade-in-up">
+  <div class="container py-5">
+    <h1 class="display-4 fw-bold mb-3">SIGPROD</h1>
+    <p class="lead col-lg-8">Plataforma empresarial para gestionar proyectos de software multi-rol: desde la idea hasta producción, con trazabilidad, calidad y control financiero.</p>
+    <div class="d-flex gap-2 mt-4">
+      <a class="btn btn-light btn-lg" th:href="@{/login}">Iniciar Sesión</a>
+      <a class="btn btn-outline-light btn-lg" th:href="@{/registro}">Registrarse</a>
+    </div>
+  </div>
+</section>
+
+<div class="container mb-5">
+  <h2 class="h4 mb-4 text-center">Roles del sistema</h2>
+  <div class="row g-3">
+    <div class="col-md-4 animate-fade-in-up" style="animation-delay:.05s">
+      <div class="card card-kpi h-100 p-3">
+        <h3 class="h6"><i class="bi bi-shield-lock text-primary"></i> Administrador</h3>
+        <p class="small text-muted mb-0">Administra usuarios, clientes y auditoría global.</p>
+      </div>
+    </div>
+    <div class="col-md-4 animate-fade-in-up" style="animation-delay:.1s">
+      <div class="card card-kpi h-100 p-3">
+        <h3 class="h6"><i class="bi bi-kanban text-primary"></i> Product Owner</h3>
+        <p class="small text-muted mb-0">Prioriza backlog, valor de negocio y aceptación.</p>
+      </div>
+    </div>
+    <div class="col-md-4 animate-fade-in-up" style="animation-delay:.15s">
+      <div class="card card-kpi h-100 p-3">
+        <h3 class="h6"><i class="bi bi-diagram-3 text-primary"></i> Project Manager</h3>
+        <p class="small text-muted mb-0">Planeación, riesgos, presupuesto y coordinación.</p>
+      </div>
+    </div>
+    <div class="col-md-4 animate-fade-in-up"><div class="card card-kpi h-100 p-3"><h3 class="h6">Analista de negocio</h3><p class="small text-muted mb-0">Requisitos y alineación con negocio.</p></div></div>
+    <div class="col-md-4 animate-fade-in-up"><div class="card card-kpi h-100 p-3"><h3 class="h6">Arquitecto software</h3><p class="small text-muted mb-0">Decisiones técnicas y estándares.</p></div></div>
+    <div class="col-md-4 animate-fade-in-up"><div class="card card-kpi h-100 p-3"><h3 class="h6">Diseñador UI/UX</h3><p class="small text-muted mb-0">Experiencia y prototipos.</p></div></div>
+    <div class="col-md-4 animate-fade-in-up"><div class="card card-kpi h-100 p-3"><h3 class="h6">Desarrolladores</h3><p class="small text-muted mb-0">Implementación FE/BE del backlog.</p></div></div>
+    <div class="col-md-4 animate-fade-in-up"><div class="card card-kpi h-100 p-3"><h3 class="h6">QA Engineer</h3><p class="small text-muted mb-0">Pruebas, defectos y calidad.</p></div></div>
+    <div class="col-md-4 animate-fade-in-up"><div class="card card-kpi h-100 p-3"><h3 class="h6">DevOps</h3><p class="small text-muted mb-0">Despliegues, entornos y monitoreo.</p></div></div>
+  </div>
+</div>
+
+<footer class="text-center small text-muted py-4 border-top">
+  TechSoft Solutions S.A.S. · SIGPROD
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
